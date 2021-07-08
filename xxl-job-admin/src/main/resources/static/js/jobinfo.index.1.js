@@ -43,10 +43,15 @@ $(function() {
 	            			return data;
 	            		}
             		},
+					{
+						"data": 'jobName',
+						"visible" : true,
+						"width":'10%'
+					},
 	                {
 	                	"data": 'jobDesc',
 						"visible" : true,
-						"width":'25%'
+						"width":'15%',
 					},
 					{
 						"data": 'scheduleType',
@@ -396,6 +401,10 @@ $(function() {
 				required : true,
 				maxlength: 50
 			},
+			jobName : {
+				required : true,
+				maxlength: 50
+			},
 			author : {
 				required : true
 			}/*,
@@ -410,6 +419,9 @@ $(function() {
             jobDesc : {
             	required : I18n.system_please_input + I18n.jobinfo_field_jobdesc
             },
+			jobName : {
+				required : I18n.system_please_input + I18n.jobinfo_field_jobname
+			},
             author : {
             	required : I18n.system_please_input + I18n.jobinfo_field_author
             }/*,
@@ -539,6 +551,7 @@ $(function() {
 		// fill base
 		$("#updateModal .form input[name='id']").val( row.id );
 		$('#updateModal .form select[name=jobGroup] option[value='+ row.jobGroup +']').prop('selected', true);
+		$("#updateModal .form input[name='jobName']").val( row.jobName );
 		$("#updateModal .form input[name='jobDesc']").val( row.jobDesc );
 		$("#updateModal .form input[name='author']").val( row.author );
 		$("#updateModal .form input[name='alarmEmail']").val( row.alarmEmail );
@@ -592,11 +605,18 @@ $(function() {
 			},
 			author : {
 				required : true
+			},
+			jobName : {
+				required : true,
+				maxlength: 50
 			}
 		},
 		messages : {
 			jobDesc : {
                 required : I18n.system_please_input + I18n.jobinfo_field_jobdesc
+			},
+			jobName : {
+				required : I18n.system_please_input + I18n.jobinfo_field_jobname
 			},
 			author : {
 				required : I18n.system_please_input + I18n.jobinfo_field_author
@@ -694,6 +714,7 @@ $(function() {
 
 		// fill base
 		$('#addModal .form select[name=jobGroup] option[value='+ row.jobGroup +']').prop('selected', true);
+		$("#addModal .form input[name='jobName']").val( row.jobName );
 		$("#addModal .form input[name='jobDesc']").val( row.jobDesc );
 		$("#addModal .form input[name='author']").val( row.author );
 		$("#addModal .form input[name='alarmEmail']").val( row.alarmEmail );
