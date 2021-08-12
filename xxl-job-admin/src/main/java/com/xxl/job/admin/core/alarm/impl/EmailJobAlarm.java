@@ -23,7 +23,7 @@ import java.util.Set;
  *
  * @author xuxueli 2020-01-19
  */
-@Component
+//@Component
 public class EmailJobAlarm implements JobAlarm {
     private static Logger logger = LoggerFactory.getLogger(EmailJobAlarm.class);
 
