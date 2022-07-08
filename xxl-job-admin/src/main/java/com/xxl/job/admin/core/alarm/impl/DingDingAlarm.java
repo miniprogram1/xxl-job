@@ -6,15 +6,11 @@ import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLog;
 import com.xxl.job.admin.core.util.I18nUtil;
+import com.xxl.job.core.handler.DingDingAlarmHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * @author: wangm
@@ -24,15 +20,10 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class DingDingAlarm implements JobAlarm {
 
-    private static Logger logger = LoggerFactory.getLogger(EmailJobAlarm.class);
-
-    @Value("${dingding.addressUrl}")
-    private String dingDingAddress;
+    private static Logger logger = LoggerFactory.getLogger(DingDingAlarm.class);
 
     @Autowired
-    private RestTemplate restTemplate;
-
-    private static final String SUCCESS_CODE = "success";
+    private DingDingAlarmHandler dingDingAlarmHandler;
 
     @Override
     public boolean doAlarm(XxlJobInfo info, XxlJobLog jobLog) {
@@ -49,19 +40,14 @@ public class DingDingAlarm implements JobAlarm {
         String triggerMsg = processTriggerMsg(jobLog.getTriggerMsg());
         messageStr.append(", 告警内容：").append(triggerMsg);
 
-        HttpHeaders headers = new HttpHeaders();
-        MediaType type = MediaType.parseMediaType("application/x-www-form-urlencoded; charset=UTF-8");
-        headers.setContentType(type);
-
         logger.info("send massage:{}", messageStr.toString());
-        HttpEntity<String> requestEntity = new HttpEntity<String>(messageStr.toString(),  headers);
 
-        String msg = restTemplate.postForObject(dingDingAddress,requestEntity, String.class);
-        if (SUCCESS_CODE.equals(msg)) {
-            return true;
+        boolean result = dingDingAlarmHandler.handler(messageStr.toString());
+
+        if (!result) {
+            logger.error(">>>>>>>>>>> xxl-job, job fail alarm dingding send error, JobLogId:{}", jobLog.getId());
         }
-        logger.error(">>>>>>>>>>> xxl-job, job fail alarm email send error, JobLogId:{}", jobLog.getId());
-        return false;
+        return  result;
     }
 
     /**
