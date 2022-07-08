@@ -83,6 +83,11 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.winner</groupId>
+			<artifactId>xxl-job-dingding</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 
 	</dependencies>
 
