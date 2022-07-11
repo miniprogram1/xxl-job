@@ -2,10 +2,7 @@ package com.xxl.job.core.util;
 
 import com.xxl.job.core.context.XxlJobHelper;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,13 +51,13 @@ public class ScriptUtil {
      */
     public static int execToFile(String command, String scriptFile, String logFile, String... params) throws IOException {
 
-        FileOutputStream fileOutputStream = null;
+        OutputStreamWriter oStreamWriter = null;
         Thread inputThread = null;
         Thread errThread = null;
         try {
             // file
-            fileOutputStream = new FileOutputStream(logFile, true);
 
+            oStreamWriter = new OutputStreamWriter(new FileOutputStream(logFile, true), 		"utf-8");
             // command
             List<String> cmdarray = new ArrayList<>();
             cmdarray.add(command);
@@ -76,12 +73,12 @@ public class ScriptUtil {
             final Process process = Runtime.getRuntime().exec(cmdarrayFinal);
 
             // log-thread
-            final FileOutputStream finalFileOutputStream = fileOutputStream;
+            final BufferedWriter writer = new BufferedWriter(oStreamWriter);
             inputThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        copy(process.getInputStream(), finalFileOutputStream, new byte[1024]);
+                        copy(process.getInputStream(), writer, "gb2312");
                     } catch (IOException e) {
                         XxlJobHelper.log(e);
                     }
@@ -91,7 +88,7 @@ public class ScriptUtil {
                 @Override
                 public void run() {
                     try {
-                        copy(process.getErrorStream(), finalFileOutputStream, new byte[1024]);
+                        copy(process.getErrorStream(), writer, "gb2312");
                     } catch (IOException e) {
                         XxlJobHelper.log(e);
                     }
@@ -112,9 +109,9 @@ public class ScriptUtil {
             XxlJobHelper.log(e);
             return -1;
         } finally {
-            if (fileOutputStream != null) {
+            if (oStreamWriter != null) {
                 try {
-                    fileOutputStream.close();
+                    oStreamWriter.close();
                 } catch (IOException e) {
                     XxlJobHelper.log(e);
                 }
@@ -133,32 +130,31 @@ public class ScriptUtil {
      * 数据流Copy（Input自动关闭，Output不处理）
      *
      * @param inputStream
-     * @param outputStream
-     * @param buffer
+     * @param writer
+     * @param charSetName
      * @return
      * @throws IOException
      */
-    private static long copy(InputStream inputStream, OutputStream outputStream, byte[] buffer) throws IOException {
+    private static long copy(InputStream inputStream, BufferedWriter writer, String charSetName) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, charSetName));
+
         try {
             long total = 0;
-            for (;;) {
-                int res = inputStream.read(buffer);
-                if (res == -1) {
-                    break;
-                }
-                if (res > 0) {
-                    total += res;
-                    if (outputStream != null) {
-                        outputStream.write(buffer, 0, res);
-                    }
+            String str;
+            while ((str = reader.readLine()) != null) {
+                if (writer != null) {
+                    writer.write(str + "\n");
+                    writer.flush();
                 }
             }
-            outputStream.flush();
             //out = null;
             inputStream.close();
             inputStream = null;
             return total;
         } finally {
+            if (reader != null) {
+                reader.close();
+            }
             if (inputStream != null) {
                 inputStream.close();
             }
