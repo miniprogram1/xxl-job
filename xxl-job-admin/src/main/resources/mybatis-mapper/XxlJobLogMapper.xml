@@ -192,7 +192,7 @@
     </select>
 
 	<select id="findClearLogIds" resultType="long" >
-		SELECT top (#{pagesize}) id FROM xxl_job_log
+		SELECT id FROM xxl_job_log
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
 			<if test="jobGroup gt 0">
 				AND job_group = #{jobGroup}
@@ -206,7 +206,7 @@
 			<if test="clearBeforeNum gt 0">
 				AND id NOT in(
 				SELECT id FROM(
-				SELECT top (#{clearBeforeNum}) id FROM xxl_job_log AS t
+				SELECT id FROM xxl_job_log AS t
 				<trim prefix="WHERE" prefixOverrides="AND | OR" >
 					<if test="jobGroup gt 0">
 						AND t.job_group = #{jobGroup}
@@ -216,11 +216,13 @@
 					</if>
 				</trim>
 				ORDER BY t.trigger_time desc
+				LIMIT #{clearBeforeNum}
 				) t1
 				)
 			</if>
 		</trim>
 		order by id asc
+		LIMIT #{pagesize}
 	</select>
 
 	<delete id="clearLog" >
@@ -232,16 +234,16 @@
 	</delete>
 
 	<select id="findFailJobLogIds" resultType="long" >
-		SELECT TOP
-			(#{pagesize}) id
+		SELECT id
 		FROM
 			xxl_job_log
 		WHERE
 			( (trigger_code NOT IN ( 0, 200 ) and handle_code = 0)  OR handle_code NOT IN ( 0, 200 ))
 			AND alarm_status = 0
-			and abs(DATEDIFF(SECOND, trigger_time, GETDATE()) ) > 30
+			and ABS(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - trigger_time))) > 30
 		ORDER BY
 			id ASC
+		LIMIT #{pagesize}
 	</select>
 
 	<update id="updateAlarmStatus" >

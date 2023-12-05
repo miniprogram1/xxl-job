@@ -55,9 +55,10 @@
 		DELETE FROM xxl_job_logglue
 		WHERE id NOT in(
 			SELECT id FROM(
-				SELECT top(#{limit}) id FROM xxl_job_logglue
+				SELECT id FROM xxl_job_logglue
 				WHERE job_id = #{jobId}
 				ORDER BY update_time desc
+				LIMIT #{limit}
 			) t1
 		) AND job_id = #{jobId}
 	</delete>
