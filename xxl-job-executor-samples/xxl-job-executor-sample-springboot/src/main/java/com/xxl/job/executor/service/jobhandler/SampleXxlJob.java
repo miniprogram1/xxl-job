@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
+import com.xxl.job.executor.mapper.APITokenMapper;
 import com.xxl.job.executor.model.APIToken;
 import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
@@ -49,6 +50,8 @@ public class SampleXxlJob {
     @Autowired
     private APITokenService apiTokenService;
 
+    private APITokenMapper apiTokenMapper;
+
 
     private RestTemplate restTemplate;
 
@@ -87,7 +90,7 @@ public class SampleXxlJob {
     @XxlJob("updateTokenJobHandler")
     public void updateTokenJobHandler() throws Exception {
         String token = getToken(appKey, appSecret);
-        if(!Strings.isEmpty(token)){
+        if (!Strings.isEmpty(token)) {
             APIToken apiToken = new APIToken("data_api", token, new Date(), new Date());
             apiTokenService.saveOrUpdate(apiToken);
         }
@@ -384,12 +387,17 @@ public class SampleXxlJob {
             connection.setDoOutput(isPostMethod);
             connection.setDoInput(true);
             connection.setUseCaches(false);
-            connection.setReadTimeout(5 * 1000);
-            connection.setConnectTimeout(3 * 1000);
+            connection.setReadTimeout(1800 * 1000);
+            connection.setConnectTimeout(1800 * 1000);
             connection.setRequestProperty("connection", "Keep-Alive");
             connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
             connection.setRequestProperty("Accept-Charset", "application/json;charset=UTF-8");
             APIToken apiToken = apiTokenService.getById("data_api");
+            if (apiToken == null || Strings.isEmpty(apiToken.getToken())) {
+                String token = getToken(appKey, appSecret);
+                apiToken = new APIToken("data_api", token, new Date(), new Date());
+                apiTokenService.saveOrUpdate(apiToken);
+            }
             connection.setRequestProperty("Authorization", apiToken.getToken());
 
             // do connection
