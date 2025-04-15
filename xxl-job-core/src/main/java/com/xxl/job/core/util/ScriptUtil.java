@@ -78,7 +78,7 @@ public class ScriptUtil {
                 @Override
                 public void run() {
                     try {
-                        copy(process.getInputStream(), writer, "gb2312");
+                        copy(process.getInputStream(), writer, "UTF-8");
                     } catch (IOException e) {
                         XxlJobHelper.log(e);
                     }
@@ -88,7 +88,7 @@ public class ScriptUtil {
                 @Override
                 public void run() {
                     try {
-                        copy(process.getErrorStream(), writer, "gb2312");
+                        copy(process.getErrorStream(), writer, "UTF-8");
                     } catch (IOException e) {
                         XxlJobHelper.log(e);
                     }
