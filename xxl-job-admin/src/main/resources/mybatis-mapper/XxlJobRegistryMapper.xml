@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xxl.job.admin.dao.XxlJobRegistryDao">
-	
+
 	<resultMap id="XxlJobRegistry" type="com.xxl.job.admin.core.model.XxlJobRegistry" >
 		<result column="id" property="id" />
 	    <result column="registry_group" property="registryGroup" />
@@ -24,7 +24,7 @@
 		FROM xxl_job_registry AS t
 		WHERE t.update_time <![CDATA[ < ]]> DATEADD(ss, -#{timeout}, #{nowTime})
 	</select>
-	
+
 	<delete id="removeDead" parameterType="java.lang.Integer" >
 		DELETE FROM xxl_job_registry
 		WHERE id in
@@ -46,7 +46,7 @@
 			`update_time` = #{updateTime}
 	</insert>
 
-	<!--
+
     <update id="registryUpdate" >
         UPDATE xxl_job_registry
         SET update_time = #{updateTime}
@@ -59,7 +59,7 @@
         INSERT INTO xxl_job_registry( registry_group , registry_key , registry_value, update_time)
         VALUES( #{registryGroup}  , #{registryKey} , #{registryValue}, #{updateTime})
     </insert>
-	-->
+
 
 	<delete id="registryDelete" >
 		DELETE FROM xxl_job_registry

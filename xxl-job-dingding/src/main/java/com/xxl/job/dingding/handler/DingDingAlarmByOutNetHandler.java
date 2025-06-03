@@ -1,11 +1,11 @@
 package com.xxl.job.dingding.handler;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.xxl.job.core.handler.DingDingAlarmHandler;
 import com.xxl.job.dingding.http.HttpClient;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.json.JSONObject;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -21,7 +21,8 @@ import java.util.Map;
  * @Description
  */
 @Slf4j
-public class DingDingAlarmByOutNetHandler implements DingDingAlarmHandler{
+@Component
+public class DingDingAlarmByOutNetHandler implements DingDingAlarmHandler {
 
     @Value("${dingDing-alarm-team-url}")
     private String dingUrl;
@@ -38,8 +39,8 @@ public class DingDingAlarmByOutNetHandler implements DingDingAlarmHandler{
         log.info(message);
         long start = System.currentTimeMillis();
         try {
-            String code = URLDecoder.decode(message,"utf-8");
-            String jsonStr = "错误调用:" +code.replace("=","");
+            String code = URLDecoder.decode(message, "utf-8");
+            String jsonStr = "错误调用:" + code.replace("=", "");
             boolean result = DingMessageXxlJob(jsonStr);
             long end = System.currentTimeMillis();
             log.info("XXlJob调用结束,耗时:{}毫秒", end - start);
@@ -65,14 +66,14 @@ public class DingDingAlarmByOutNetHandler implements DingDingAlarmHandler{
         Map<String, Object> atMap = new HashMap();
 
         // 添加群聊@的用户
-        if (StringUtils.isNotBlank(mobiles)) {
+        if (mobiles != null && !"".equals(mobiles)) {
 
             List<String> mobile = new ArrayList<>();
             String[] mobileList = mobiles.split(",");
             for (int i = 0; i < mobileList.length; i++) {
                 mobile.add(mobileList[i]);
             }
-            atMap.put("atMobiles",mobile);
+            atMap.put("atMobiles", mobile);
         }
 
         //是否通知所有人
