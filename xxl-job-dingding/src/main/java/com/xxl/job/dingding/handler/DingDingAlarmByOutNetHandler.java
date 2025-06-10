@@ -66,8 +66,7 @@ public class DingDingAlarmByOutNetHandler implements DingDingAlarmHandler {
         Map<String, Object> atMap = new HashMap();
 
         // 添加群聊@的用户
-        if (mobiles != null && !"".equals(mobiles)) {
-
+        if (mobiles != null && mobiles != "") {
             List<String> mobile = new ArrayList<>();
             String[] mobileList = mobiles.split(",");
             for (int i = 0; i < mobileList.length; i++) {
