@@ -64,7 +64,7 @@ public class ScriptUtil {
             cmdarray.add(scriptFile);
             if (params!=null && params.length>0) {
                 for (String param:params) {
-                    cmdarray.add(param);
+                    cmdarray.add(param == null ? "" : param);
                 }
             }
             String[] cmdarrayFinal = cmdarray.toArray(new String[cmdarray.size()]);
