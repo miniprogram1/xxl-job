@@ -57,7 +57,7 @@ public class ScriptUtil {
         try {
             // file
 
-            oStreamWriter = new OutputStreamWriter(new FileOutputStream(logFile, true), 		"utf-8");
+            oStreamWriter = new OutputStreamWriter(new FileOutputStream(logFile, true), 		"UTF-8");
             // command
             List<String> cmdarray = new ArrayList<>();
             cmdarray.add(command);
@@ -78,7 +78,7 @@ public class ScriptUtil {
                 @Override
                 public void run() {
                     try {
-                        copy(process.getInputStream(), writer, "gb2312");
+                        copy(process.getInputStream(), writer, "UTF-8");
                     } catch (IOException e) {
                         XxlJobHelper.log(e);
                     }
@@ -88,7 +88,7 @@ public class ScriptUtil {
                 @Override
                 public void run() {
                     try {
-                        copy(process.getErrorStream(), writer, "gb2312");
+                        copy(process.getErrorStream(), writer, "UTF-8");
                     } catch (IOException e) {
                         XxlJobHelper.log(e);
                     }
