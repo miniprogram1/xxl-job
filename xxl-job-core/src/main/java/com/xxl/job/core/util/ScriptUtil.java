@@ -3,15 +3,16 @@ package com.xxl.job.core.util;
 import com.xxl.job.core.context.XxlJobHelper;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *  1、内嵌编译器如"PythonInterpreter"无法引用扩展包，因此推荐使用java调用控制台进程方式"Runtime.getRuntime().exec()"来运行脚本(shell或python)；
- *  2、因为通过java调用控制台进程方式实现，需要保证目标机器PATH路径正确配置对应编译器；
- *  3、暂时脚本执行日志只能在脚本执行结束后一次性获取，无法保证实时性；因此为确保日志实时性，可改为将脚本打印的日志存储在指定的日志文件上；
- *  4、python 异常输出优先级高于标准输出，体现在Log文件中，因此推荐通过logging方式打日志保持和异常信息一致；否则用prinf日志顺序会错乱
- *
+ * 1、内嵌编译器如"PythonInterpreter"无法引用扩展包，因此推荐使用java调用控制台进程方式"Runtime.getRuntime().exec()"来运行脚本(shell或python)；
+ * 2、因为通过java调用控制台进程方式实现，需要保证目标机器PATH路径正确配置对应编译器；
+ * 3、暂时脚本执行日志只能在脚本执行结束后一次性获取，无法保证实时性；因此为确保日志实时性，可改为将脚本打印的日志存储在指定的日志文件上；
+ * 4、python 异常输出优先级高于标准输出，体现在Log文件中，因此推荐通过logging方式打日志保持和异常信息一致；否则用prinf日志顺序会错乱
+ * <p>
  * Created by xuxueli on 17/2/25.
  */
 public class ScriptUtil {
@@ -32,8 +33,8 @@ public class ScriptUtil {
             fileOutputStream.close();
         } catch (Exception e) {
             throw e;
-        }finally{
-            if(fileOutputStream != null){
+        } finally {
+            if (fileOutputStream != null) {
                 fileOutputStream.close();
             }
         }
@@ -57,7 +58,7 @@ public class ScriptUtil {
         try {
             // file
 
-            oStreamWriter = new OutputStreamWriter(new FileOutputStream(logFile, true), 		"utf-8");
+            oStreamWriter = new OutputStreamWriter(new FileOutputStream(logFile, true), "UTF-8");
             // command
             List<String> cmdarray = new ArrayList<>();
             cmdarray.add(command);
@@ -78,7 +79,7 @@ public class ScriptUtil {
                 @Override
                 public void run() {
                     try {
-                        copy(process.getInputStream(), writer, "gb2312");
+                        copy(process.getInputStream(), writer, "UTF-8");
                     } catch (IOException e) {
                         XxlJobHelper.log(e);
                     }
@@ -88,7 +89,7 @@ public class ScriptUtil {
                 @Override
                 public void run() {
                     try {
-                        copy(process.getErrorStream(), writer, "gb2312");
+                        copy(process.getErrorStream(), writer, "UTF-8");
                     } catch (IOException e) {
                         XxlJobHelper.log(e);
                     }
